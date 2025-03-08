@@ -1,0 +1,52 @@
+name: forgejo
+
+services:
+  app:
+    image: codeberg.org/forgejo/forgejo:10.0.1
+    restart: unless-stopped
+    environment:
+      APP_NAME: "0x4931's Personal Forgejo"
+      APP_SLOGAN: ""
+
+      FORGEJO__UI_0X2E_META__AUTHOR: "0x4931's Personal Forgejo"
+
+      FORGEJO__SERVER__PROTOCOL: "http"
+      FORGEJO__SERVER__DOMAIN: "git.4931.cool"
+      FORGEJO__SERVER__ROOT_URL: "https://git.4931.cool/"
+      FORGEJO__SERVER__DISABLE_SSH: "true"
+      FORGEJO__SERVER__LANDING_PAGE: "explore"
+
+      FORGEJO__SERVICE__DISABLE_REGISTRATION: "true"
+
+      FORGEJO__TIME__DEFAULT_UI_LOCATION: "America/New_York"
+
+      FORGEJO__MAILER__ENABLED: "true"
+      FORGEJO__MAILER__SMTP_ADDR: $SMTP_HOST
+      FORGEJO__MAILER__SMTP_PORT: $SMTP_PORT
+      FORGEJO__MAILER__USER: $SMTP_USER
+      FORGEJO__MAILER__PASSWD: $SMTP_PASS
+      FORGEJO__MAILER__FROM: "Forgejo <forgejo@no-reply.4931.cool>"
+
+      FORGEJO__REPOSITORY__DEFAULT_BRANCH: "master"
+
+      FORGEJO__OTHER__SHOW_FOOTER_VERSION: "false"
+      FORGEJO__OTHER__SHOW_FOOTER_TEMPLATE_LOAD_TIME: "false"
+      FORGEJO__OTHER__SHOW_FOOTER_POWERED_BY: "false"
+    volumes:
+      - forgejo-data:/data
+    networks:
+      - public
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.forgejo.rule: "Host(`git.4931.cool`)"
+      traefik.http.routers.forgejo.entrypoints: "web"
+      traefik.http.services.forgejo.loadbalancer.server.port: "3000"
+      traefik.http.services.forgejo.loadbalancer.server.scheme: "http"
+
+volumes:
+  forgejo-data:
+    external: true
+
+networks:
+  public:
+    external: true
