@@ -1,0 +1,24 @@
+name: commafeed
+
+services:
+  app:
+    image: athou/commafeed:5.6.1-h2
+    restart: unless-stopped
+    volumes:
+      - commafeed-data:/commafeed/data
+    networks:
+      - public
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.commafeed.rule: "Host(`rss.4931.cool`)"
+      traefik.http.routers.commafeed.entrypoints: "web"
+      traefik.http.services.commafeed.loadbalancer.server.port: "8082"
+      traefik.http.services.commafeed.loadbalancer.server.scheme: "http"
+
+volumes:
+  commafeed-data:
+    external: true
+
+networks:
+  public:
+    external: true
